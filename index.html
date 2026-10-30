@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Portfólio de Alba Morgana dos Santos Benício — Engenharia de Software, Backend e Segurança."
+    />
+    <meta name="theme-color" content="#121212" />
+    <title>Alba Morgana | Engenharia de Software & Segurança</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              graphite: "#121212",
+              surface: "#1A1A1A",
+              cyan: "#00F2FE",
+              "cyan-soft": "#8CFAFF",
+              ink: "#F4F7F8",
+              muted: "#9AA4AA",
+            },
+            fontFamily: {
+              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
+            boxShadow: {
+              glow: "0 0 42px rgba(0, 242, 254, 0.12)",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      body {
+        background: #121212;
+        color: #f4f7f8;
+      }
+
+      ::selection {
+        background: rgba(0, 242, 254, 0.28);
+        color: #ffffff;
+      }
+
+      .grid-overlay {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+        background-size: 42px 42px;
+        mask-image: linear-gradient(to bottom, black, transparent 78%);
+      }
+
+      .cyan-line {
+        background: linear-gradient(90deg, #00f2fe, rgba(0, 242, 254, 0));
+      }
+
+      .nav-link {
+        position: relative;
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -0.5rem;
+        width: 100%;
+        height: 1px;
+        transform: scaleX(0);
+        transform-origin: right;
+        background: #00f2fe;
+        transition: transform 180ms ease;
+      }
+
+      .nav-link:hover::after,
+      .nav-link:focus-visible::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+
+      .reveal {
+        animation: reveal 700ms ease both;
+      }
+
+      .delay-1 {
+        animation-delay: 120ms;
+      }
+
+      .delay-2 {
+        animation-delay: 220ms;
+      }
+
+      .delay-3 {
+        animation-delay: 320ms;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(14px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="overflow-x-hidden font-sans antialiased">
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-graphite/85 backdrop-blur-xl">
+      <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
+        <a href="#inicio" class="group flex items-center gap-3" aria-label="Voltar ao início">
+          <span
+            class="flex h-9 w-9 items-center justify-center rounded-full border border-cyan/50 text-sm font-medium text-cyan transition group-hover:bg-cyan group-hover:text-graphite"
+            >AM</span
+          >
+          <span class="hidden text-sm font-medium tracking-[0.2em] text-ink sm:block">ALBA MORGANA</span>
+        </a>
+
+        <button
+          id="menu-button"
+          class="rounded-lg border border-white/10 p-2 text-muted transition hover:border-cyan/50 hover:text-cyan md:hidden"
+          aria-label="Abrir menu"
+          aria-expanded="false"
+          aria-controls="menu"
+        >
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+        </button>
+
+        <nav id="menu" class="absolute left-6 right-6 top-[5.5rem] hidden rounded-xl border border-white/10 bg-surface p-5 shadow-glow md:static md:flex md:items-center md:gap-9 md:border-0 md:bg-transparent md:p-0 md:shadow-none" aria-label="Navegação principal">
+          <a class="nav-link block py-2 text-sm text-muted transition hover:text-ink md:py-0" href="#sobre">Sobre</a>
+          <a class="nav-link block py-2 text-sm text-muted transition hover:text-ink md:py-0" href="#habilidades">Competências</a>
+          <a class="nav-link block py-2 text-sm text-muted transition hover:text-ink md:py-0" href="#projetos">Projetos</a>
+          <a class="mt-3 inline-flex items-center justify-center rounded-full border border-cyan/60 px-5 py-2.5 text-sm font-medium text-cyan transition hover:bg-cyan hover:text-graphite md:mt-0" href="#contato">Vamos conversar <span class="ml-2">↗</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="inicio" class="relative isolate flex min-h-screen items-center overflow-hidden pt-20">
+        <div class="grid-overlay pointer-events-none absolute inset-0 -z-10 opacity-70"></div>
+        <div class="pointer-events-none absolute -right-32 top-20 -z-10 h-96 w-96 rounded-full bg-cyan/10 blur-3xl"></div>
+
+        <div class="mx-auto grid w-full max-w-7xl gap-16 px-6 py-24 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:px-10 lg:py-32">
+          <div>
+            <div class="reveal mb-8 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-cyan">
+              <span class="h-px w-10 bg-cyan"></span>
+              Engenharia de Software & Segurança
+            </div>
+            <h1 class="reveal delay-1 max-w-4xl text-5xl font-light leading-[1.05] tracking-[-0.05em] text-ink sm:text-7xl lg:text-8xl">
+              Código seguro.<br />
+              <span class="text-cyan">Impacto eficiente.</span>
+            </h1>
+            <p class="reveal delay-2 mt-8 max-w-2xl text-lg font-light leading-8 text-muted sm:text-xl">
+              Alba Morgana dos Santos Benício — unindo visão de processos e negócios globais ao desenvolvimento backend robusto, observável e preparado para evoluir.
+            </p>
+            <div class="reveal delay-3 mt-10 flex flex-col gap-4 sm:flex-row">
+              <a href="#projetos" class="inline-flex items-center justify-center rounded-full bg-cyan px-6 py-3.5 text-sm font-semibold text-graphite transition hover:bg-cyan-soft">Explorar projetos <span class="ml-2">↓</span></a>
+              <a href="#contato" class="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3.5 text-sm font-medium text-ink transition hover:border-cyan hover:text-cyan">Entrar em contato <span class="ml-2">↗</span></a>
+            </div>
+          </div>
+
+          <div class="reveal delay-2 relative">
+            <div class="absolute -inset-4 rounded-3xl border border-cyan/10"></div>
+            <div class="relative rounded-2xl border border-white/10 bg-surface/90 p-6 shadow-glow sm:p-8">
+              <div class="mb-12 flex items-center justify-between text-xs text-muted">
+                <span class="font-mono">/profile/overview</span>
+                <span class="flex items-center gap-2 text-cyan"><span class="h-2 w-2 animate-pulse rounded-full bg-cyan"></span> disponível</span>
+              </div>
+              <div class="space-y-7">
+                <div>
+                  <p class="text-xs uppercase tracking-[0.22em] text-muted">Foco atual</p>
+                  <p class="mt-2 text-xl font-light text-ink">Backend, segurança e telemetria</p>
+                </div>
+                <div class="h-px bg-white/10"></div>
+                <div class="grid grid-cols-2 gap-6">
+                  <div>
+                    <p class="text-3xl font-light text-cyan">Java</p>
+                    <p class="mt-1 text-xs text-muted">ecossistema principal</p>
+                  </div>
+                  <div>
+                    <p class="text-3xl font-light text-cyan">ADS</p>
+                    <p class="mt-1 text-xs text-muted">formação em andamento</p>
+                  </div>
+                </div>
+                <div class="rounded-xl border border-cyan/15 bg-cyan/5 p-4">
+                  <p class="font-mono text-xs leading-6 text-cyan-soft">
+                    // construir com clareza<br />
+                    // proteger por padrão<br />
+                    // medir para evoluir
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="sobre" class="border-t border-white/5 py-24 lg:py-32">
+        <div class="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[0.75fr_1.25fr] lg:px-10">
+          <div>
+            <p class="text-xs font-medium uppercase tracking-[0.3em] text-cyan">01 / Sobre mim</p>
+            <h2 class="mt-5 max-w-sm text-4xl font-light leading-tight tracking-[-0.04em] text-ink sm:text-5xl">Entre processos, pessoas e sistemas.</h2>
+          </div>
+          <div class="max-w-3xl">
+            <p class="text-xl font-light leading-9 text-ink sm:text-2xl">
+              Minha trajetória começou no Comércio Exterior, onde aprendi a enxergar operações como ecossistemas conectados — com riscos, dependências e oportunidades.
+            </p>
+            <p class="mt-7 leading-8 text-muted">
+              Hoje, essa visão orienta minha transição estratégica para a tecnologia. Sou graduada em Comércio Exterior e estou em formação em Análise e Desenvolvimento de Sistemas, com foco em construir soluções backend confiáveis usando Java e Spring Boot. Meu trabalho combina engenharia, cibersegurança e observabilidade para transformar complexidade em operação clara, segura e eficiente.
+            </p>
+            <div class="mt-10 h-px w-full cyan-line"></div>
+            <div class="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm text-muted">
+              <span>Curiosidade estruturada</span><span>•</span><span>Visão sistêmica</span><span>•</span><span>Aprendizado contínuo</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="habilidades" class="border-t border-white/5 py-24 lg:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-10">
+          <div class="mb-14 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <p class="text-xs font-medium uppercase tracking-[0.3em] text-cyan">02 / Competências</p>
+              <h2 class="mt-5 text-4xl font-light tracking-[-0.04em] text-ink sm:text-5xl">Ferramentas para gerar confiança.</h2>
+            </div>
+            <p class="max-w-sm text-sm leading-6 text-muted">Tecnologia aplicada com fundamentos sólidos, contexto de negócio e atenção constante à operação.</p>
+          </div>
+
+          <div class="grid gap-5 md:grid-cols-2">
+            <article class="rounded-2xl border border-white/10 bg-surface p-7 transition hover:border-cyan/35 hover:shadow-glow sm:p-9">
+              <div class="flex items-start justify-between">
+                <span class="font-mono text-sm text-cyan">01</span>
+                <svg class="h-7 w-7 text-cyan/80" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4" /></svg>
+              </div>
+              <h3 class="mt-12 text-2xl font-light text-ink">Backend & Infra</h3>
+              <p class="mt-4 leading-7 text-muted">Construção de APIs e serviços resilientes, com performance mensurável, integração segura e infraestrutura preparada para escalar.</p>
+              <div class="mt-8 flex flex-wrap gap-2">
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">Java 17+</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">Spring Boot</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">SQL</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">Cloud</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">DevSecOps</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">Observabilidade</span>
+              </div>
+            </article>
+            <article class="rounded-2xl border border-white/10 bg-surface p-7 transition hover:border-cyan/35 hover:shadow-glow sm:p-9">
+              <div class="flex items-start justify-between">
+                <span class="font-mono text-sm text-cyan">02</span>
+                <svg class="h-7 w-7 text-cyan/80" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M4 19.5V5.8a1.8 1.8 0 0 1 1.8-1.8H20v15H5.8A1.8 1.8 0 0 0 4 20.8m0-1.3a1.8 1.8 0 0 1 1.8-1.8H20" /></svg>
+              </div>
+              <h3 class="mt-12 text-2xl font-light text-ink">Processos & Negócios</h3>
+              <p class="mt-4 leading-7 text-muted">Leitura de contexto para conectar requisitos, operação e tecnologia — reduzindo ruído e aumentando a qualidade das decisões.</p>
+              <div class="mt-8 flex flex-wrap gap-2">
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">Processos</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">Logística internacional</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">Compliance</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">Requisitos</span>
+                <span class="rounded-full border border-cyan/20 px-3 py-1.5 text-xs text-cyan-soft">TCP/IP</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="projetos" class="border-t border-white/5 py-24 lg:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-10">
+          <div class="mb-14">
+            <p class="text-xs font-medium uppercase tracking-[0.3em] text-cyan">03 / Projetos em destaque</p>
+            <h2 class="mt-5 max-w-2xl text-4xl font-light leading-tight tracking-[-0.04em] text-ink sm:text-5xl">Engenharia que deixa rastros úteis.</h2>
+          </div>
+          <div class="space-y-5">
+            <article class="group grid gap-8 rounded-2xl border border-white/10 bg-surface p-7 transition hover:border-cyan/35 hover:shadow-glow md:grid-cols-[0.35fr_1fr_auto] md:items-center md:p-10">
+              <p class="font-mono text-sm text-cyan">01 / OPEN SOURCE</p>
+              <div>
+                <h3 class="text-2xl font-light text-ink transition group-hover:text-cyan">AgroGuard API</h3>
+                <p class="mt-3 max-w-2xl leading-7 text-muted">Projeto com licença MIT focado em telemetria, segurança de dados e monitoramento em tempo real para cenários de logística e agronegócio.</p>
+                <div class="mt-5 flex flex-wrap gap-2 text-xs text-cyan-soft"><span>Telemetria</span><span>•</span><span>Segurança</span><span>•</span><span>Monitoramento</span></div>
+              </div>
+              <span class="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-xl text-muted transition group-hover:border-cyan group-hover:text-cyan">↗</span>
+            </article>
+            <article class="group grid gap-8 rounded-2xl border border-white/10 bg-surface p-7 transition hover:border-cyan/35 hover:shadow-glow md:grid-cols-[0.35fr_1fr_auto] md:items-center md:p-10">
+              <p class="font-mono text-sm text-cyan">02 / JAVA ENTERPRISE</p>
+              <div>
+                <h3 class="text-2xl font-light text-ink transition group-hover:text-cyan">Base de registro de logs</h3>
+                <p class="mt-3 max-w-2xl leading-7 text-muted">Arquitetura de registro JSON padronizada para APIs de alto desempenho, facilitando diagnóstico, correlação de eventos e observabilidade.</p>
+                <div class="mt-5 flex flex-wrap gap-2 text-xs text-cyan-soft"><span>JSON</span><span>•</span><span>Performance</span><span>•</span><span>Observabilidade</span></div>
+              </div>
+              <span class="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-xl text-muted transition group-hover:border-cyan group-hover:text-cyan">↗</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="contato" class="border-t border-white/5 py-24 lg:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-10">
+          <div class="relative overflow-hidden rounded-3xl border border-cyan/20 bg-surface px-7 py-16 text-center shadow-glow sm:px-12">
+            <div class="pointer-events-none absolute -left-20 -top-32 h-72 w-72 rounded-full bg-cyan/10 blur-3xl"></div>
+            <p class="relative text-xs font-medium uppercase tracking-[0.3em] text-cyan">04 / Contato</p>
+            <h2 class="relative mx-auto mt-5 max-w-3xl text-4xl font-light leading-tight tracking-[-0.04em] text-ink sm:text-6xl">Vamos construir algo mais seguro?</h2>
+            <p class="relative mx-auto mt-6 max-w-xl leading-7 text-muted">Estou aberta a conversas sobre tecnologia, backend, segurança e oportunidades que transformem desafios complexos em soluções eficientes.</p>
+            <div class="relative mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+              <a href="mailto:albamorgana9@gmail.com" class="inline-flex items-center justify-center rounded-full bg-cyan px-6 py-3.5 text-sm font-semibold text-graphite transition hover:bg-cyan-soft">albamorgana9@gmail.com <span class="ml-2">↗</span></a>
+              <a href="https://www.linkedin.com/in/albamorgana" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3.5 text-sm font-medium text-ink transition hover:border-cyan hover:text-cyan">LinkedIn <span class="ml-2">↗</span></a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-white/5">
+      <div class="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-xs text-muted sm:flex-row sm:items-center sm:justify-between lg:px-10">
+        <p>© <span id="year"></span> Alba Morgana dos Santos Benício</p>
+        <p class="font-mono tracking-wide">feito com clareza · segurança · propósito</p>
+      </div>
+    </footer>
+
+    <script>
+      const menuButton = document.getElementById("menu-button");
+      const menu = document.getElementById("menu");
+
+      menuButton.addEventListener("click", () => {
+        const isOpen = menuButton.getAttribute("aria-expanded") === "true";
+        menuButton.setAttribute("aria-expanded", String(!isOpen));
+        menu.classList.toggle("hidden", isOpen);
+      });
+
+      menu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          menuButton.setAttribute("aria-expanded", "false");
+          menu.classList.add("hidden");
+        });
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
