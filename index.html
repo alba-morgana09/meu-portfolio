@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="pt-BR" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
@@ -7,6 +7,7 @@
     <meta name="theme-color" content="#F8FAFC" />
     <title>Alba Morgana | Engenharia de Software & Segurança</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -54,10 +55,11 @@
       .reveal { animation: reveal 700ms ease both; }
       .delay-1 { animation-delay: 120ms; } .delay-2 { animation-delay: 220ms; } .delay-3 { animation-delay: 320ms; }
       .mascot-wrap { animation: float 4s ease-in-out infinite; }
+      .capybara-stage { width: 148px; height: 148px; }
+      .capybara-stage canvas { display: block; width: 100%; height: 100%; }
       .mascot-wrap:hover { animation: mascot-wiggle .6s ease both; }
-      .mascot-eye { transform-origin: center; animation: blink 5s infinite; }
       .speech { opacity: 0; transform: translateY(8px) scale(.96); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
-      .mascot-wrap:hover .speech, .mascot-wrap.is-near .speech { opacity: 1; transform: translateY(0) scale(1); }
+      .mascot-wrap:hover .speech, .mascot-wrap.is-near .speech, .mascot-wrap.is-speaking .speech { opacity: 1; transform: translateY(0) scale(1); }
       @keyframes reveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
       @keyframes mascot-wiggle { 0%, 100% { transform: rotate(0) translateY(0); } 40% { transform: rotate(-5deg) translateY(-5px); } 70% { transform: rotate(4deg) translateY(-3px); } }
@@ -148,18 +150,9 @@
       </section>
     </main>
     <footer class="border-t border-line"><div class="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-xs text-slate sm:flex-row sm:items-center sm:justify-between lg:px-10"><p>© <span id="year"></span> Alba Morgana dos Santos Benício</p><p class="font-mono tracking-wide">clareza · segurança · propósito</p></div></footer>
-    <div id="mascot" class="mascot-wrap fixed bottom-5 right-5 z-40 cursor-pointer sm:bottom-8 sm:right-8" role="button" tabindex="0" aria-label="Mascote de segurança interativo">
-      <div class="speech absolute bottom-full right-0 mb-4 w-52 rounded-2xl rounded-br-sm border border-cyan/20 bg-paper p-3 text-xs leading-5 text-slate shadow-soft"><span data-i18n="mascot.message">Olá! Segurança e boas ideias por aqui.</span></div>
-      <div class="relative flex h-20 w-20 items-center justify-center rounded-[28px] border-2 border-cyan bg-ink shadow-cyan">
-        <svg width="58" height="58" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-          <path d="M14 30c0-12 8-20 18-20s18 8 18 20v16c0 6-5 10-10 10H24c-5 0-10-4-10-10V30Z" fill="#F8FAFC" stroke="#00A3C4" stroke-width="2"/>
-          <path d="M12 30 7 24l9-1M52 30l5-6-9-1" stroke="#00A3C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <g class="mascot-eye"><circle cx="24" cy="31" r="5" fill="#0F172A"/><circle cx="40" cy="31" r="5" fill="#0F172A"/><circle cx="24" cy="31" r="1.5" fill="#00A3C4"/><circle cx="40" cy="31" r="1.5" fill="#00A3C4"/></g>
-          <path d="M27 43h10M32 10V5M28 5h8" stroke="#00A3C4" stroke-width="2" stroke-linecap="round"/>
-          <path d="M27 40c2 2 6 2 10 0" stroke="#007791" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <span class="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-ink bg-cyan-bright"></span>
-      </div>
+    <div id="container-assistente" role="button" tabindex="0" aria-label="Assistente Fifi, capivara tecnológica">
+      <div id="balao-fifi">E aí! Sou a Fifi 🦫, a capivara assistente mais atenta do Capibaribe. Calma, eu não mordo! Só caço os bugs do sistema e os logs suspeitos que tentam passar despercebidos.</div>
+      <div id="canvas-capivara" aria-label="Capivara 3D interativa"></div>
     </div>
     <script>
       const translations = {
@@ -218,20 +211,160 @@
         menuButton.setAttribute("aria-expanded", "false");
         menu.classList.add("hidden");
       }));
-      const mascot = document.getElementById("mascot");
-      const activateMascot = () => mascot.classList.add("is-near");
-      const deactivateMascot = () => mascot.classList.remove("is-near");
-      mascot.addEventListener("mouseenter", activateMascot);
-      mascot.addEventListener("mouseleave", deactivateMascot);
-      mascot.addEventListener("focus", activateMascot);
-      mascot.addEventListener("blur", deactivateMascot);
-      document.addEventListener("mousemove", (event) => {
-        const rect = mascot.getBoundingClientRect();
-        const distance = Math.hypot(event.clientX - (rect.left + rect.width / 2), event.clientY - (rect.top + rect.height / 2));
-        if (distance < 150) activateMascot();
-        else if (!mascot.matches(":hover") && document.activeElement !== mascot) deactivateMascot();
+      const assistant = document.getElementById("container-assistente");
+      const capybaraStage = document.getElementById("canvas-capivara");
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+      camera.position.set(0, 0.3, 5.2);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(220, 220, false);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      capybaraStage.appendChild(renderer.domElement);
+      const capybara = new THREE.Group();
+      capybara.position.y = -0.25;
+      scene.add(capybara);
+      const brown = new THREE.MeshStandardMaterial({ color: 0x9a6b4b, roughness: 0.86 });
+      const lightBrown = new THREE.MeshStandardMaterial({ color: 0xc08d68, roughness: 0.9 });
+      const darkBrown = new THREE.MeshStandardMaterial({ color: 0x4c3025, roughness: 0.85 });
+      const techCyan = new THREE.MeshStandardMaterial({ color: 0x00a3c4, emissive: 0x004653, emissiveIntensity: 0.45, metalness: 0.35, roughness: 0.32 });
+      const black = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.4 });
+      const mesh = (geometry, material, scale, position) => {
+        const item = new THREE.Mesh(geometry, material);
+        item.scale.set(...scale);
+        item.position.set(...position);
+        capybara.add(item);
+        return item;
+      };
+      mesh(new THREE.SphereGeometry(1, 28, 20), brown, [1.12, 0.95, 0.86], [0, -0.68, 0]);
+      const head = new THREE.Group();
+      head.position.set(0, 0.35, 0.08);
+      capybara.add(head);
+      const headMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 28, 20), lightBrown);
+      headMesh.scale.set(0.9, 0.82, 0.78);
+      head.add(headMesh);
+      const snout = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16), lightBrown);
+      snout.scale.set(0.56, 0.34, 0.48);
+      snout.position.set(0, -0.18, 0.62);
+      head.add(snout);
+      const nose = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 12), darkBrown);
+      nose.scale.set(0.25, 0.13, 0.14);
+      nose.position.set(0, -0.11, 0.98);
+      head.add(nose);
+      [-1, 1].forEach((side) => {
+        const ear = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14), lightBrown);
+        ear.scale.set(0.22, 0.25, 0.15);
+        ear.position.set(side * 0.67, 0.76, 0.02);
+        head.add(ear);
+        const eye = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 12), black);
+        eye.scale.set(0.09, 0.12, 0.06);
+        eye.position.set(side * 0.31, 0.32, 0.72);
+        head.add(eye);
+        eye.userData.isEye = true;
       });
+      const glasses = new THREE.Group();
+      const frameGeometry = new THREE.TorusGeometry(0.22, 0.025, 8, 24);
+      [-1, 1].forEach((side) => {
+        const frame = new THREE.Mesh(frameGeometry, techCyan);
+        frame.scale.set(1, 0.75, 1);
+        frame.position.set(side * 0.31, 0.32, 0.78);
+        glasses.add(frame);
+      });
+      const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.035, 0.035), techCyan);
+      bridge.position.set(0, 0.32, 0.78);
+      glasses.add(bridge);
+      head.add(glasses);
+      const headset = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.025, 8, 32, Math.PI), techCyan);
+      headset.rotation.z = Math.PI;
+      headset.position.set(0, 0.22, -0.02);
+      head.add(headset);
+      const light = new THREE.HemisphereLight(0xffffff, 0xb9c6cc, 2.2);
+      scene.add(light);
+      const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
+      keyLight.position.set(2, 3, 4);
+      scene.add(keyLight);
+      const pointer = { x: 0, y: 0 };
+      let targetRotation = { x: 0, y: 0 };
+      let jump = 0;
+      let blinkAt = performance.now() + 2600;
+      let speakingUntil = 0;
+      document.addEventListener("pointermove", (event) => {
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = (event.clientY / window.innerHeight) * 2 - 1;
+        targetRotation = { x: pointer.y * -0.18, y: pointer.x * 0.28 };
+      });
+      const animateCapybara = (now) => {
+        requestAnimationFrame(animateCapybara);
+        head.rotation.x += (targetRotation.x - head.rotation.x) * 0.055;
+        head.rotation.y += (targetRotation.y - head.rotation.y) * 0.055;
+        capybara.rotation.z *= 0.92;
+        capybara.position.y = -0.25 + Math.max(0, jump);
+        jump *= 0.9;
+        if (now > blinkAt) {
+          head.traverse((item) => { if (item.userData.isEye) item.scale.y = 0.015; });
+          setTimeout(() => head.traverse((item) => { if (item.userData.isEye) item.scale.y = 0.12; }), 115);
+          blinkAt = now + 2800 + Math.random() * 3000;
+        }
+        if (speakingUntil && now > speakingUntil) {
+          assistant.classList.remove("is-speaking");
+          speakingUntil = 0;
+        }
+        renderer.render(scene, camera);
+      };
+      const reactToCapybara = () => {
+        jump = 0.32;
+        capybara.rotation.z = (Math.random() > 0.5 ? 1 : -1) * 0.12;
+        assistant.classList.add("is-speaking");
+        speakingUntil = performance.now() + 3800;
+      };
+      assistant.addEventListener("mouseenter", reactToCapybara);
+      assistant.addEventListener("click", reactToCapybara);
+      assistant.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") reactToCapybara(); });
+      assistant.addEventListener("pointermove", (event) => {
+        const rect = assistant.getBoundingClientRect();
+        const distance = Math.hypot(event.clientX - (rect.left + rect.width / 2), event.clientY - (rect.top + rect.height / 2));
+        if (distance < 180) assistant.classList.add("is-speaking");
+      });
+      animateCapybara(performance.now());
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
+    <style>
+      #container-assistente {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 45;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        cursor: pointer;
+      }
+      #balao-fifi {
+        max-width: 360px;
+        margin-bottom: 10px;
+        padding: 16px 18px;
+        border-radius: 16px;
+        background: #ffffff;
+        color: #0f172a;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+        font-size: 0.9rem;
+        line-height: 1.55;
+      }
+      #canvas-capivara {
+        width: 220px;
+        height: 220px;
+        overflow: hidden;
+      }
+      @media (max-width: 640px) {
+        #container-assistente {
+          right: 12px;
+          bottom: 12px;
+        }
+        #balao-fifi {
+          max-width: min(320px, calc(100vw - 32px));
+          font-size: 0.8rem;
+        }
+      }
+    </style>
   </body>
 </html>
