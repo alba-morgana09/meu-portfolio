@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#F8FAFC" />
     <title>Alba Morgana | Engenharia de Software & Segurança</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" src="https://cdn.spline.design/@splinetool/viewer@2.0.126/build/spline-viewer.webgpu.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.161.0/three.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -54,8 +54,16 @@
       .nav-link:hover::after, .nav-link:focus-visible::after { transform: scaleX(1); transform-origin: left; }
       .reveal { animation: reveal 700ms ease both; }
       .delay-1 { animation-delay: 120ms; } .delay-2 { animation-delay: 220ms; } .delay-3 { animation-delay: 320ms; }
+      .profile-photo {
+        width: min(100%, 300px);
+        aspect-ratio: 1;
+        object-fit: cover;
+        border: 2px solid rgba(0, 163, 196, .45);
+        border-radius: 28px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, .12);
+      }
       .speech { opacity: 0; transform: translateY(8px) scale(.96); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
-      #container-assistente:hover .speech, #container-assistente.is-speaking .speech { opacity: 1; transform: translateY(0) scale(1); }
+      #container-assistente:hover #balao-pimpao, #container-assistente.is-speaking #balao-pimpao { opacity: 1; transform: translateY(0) scale(1); }
       @keyframes reveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
@@ -117,7 +125,11 @@
       </section>
       <section id="sobre" class="border-t border-line py-24 lg:py-32">
         <div class="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[.75fr_1.25fr] lg:px-10">
-          <div><p data-i18n="about.label" class="text-xs font-semibold uppercase tracking-[.3em] text-cyan">01 / Sobre mim</p><h2 data-i18n="about.title" class="mt-5 max-w-sm text-4xl font-light leading-tight tracking-[-.04em] text-ink sm:text-5xl">Entre processos, pessoas e sistemas.</h2></div>
+          <div>
+            <p data-i18n="about.label" class="text-xs font-semibold uppercase tracking-[.3em] text-cyan">01 / Sobre mim</p>
+            <h2 data-i18n="about.title" class="mt-5 max-w-sm text-4xl font-light leading-tight tracking-[-.04em] text-ink sm:text-5xl">Entre processos, pessoas e sistemas.</h2>
+            <img class="profile-photo mt-8" src="foto-perfil.jpg" alt="Alba Morgana dos Santos Benício" loading="lazy" />
+          </div>
           <div class="max-w-3xl"><p data-i18n="about.lead" class="text-xl font-light leading-9 text-ink sm:text-2xl">Minha trajetória começou no Comércio Exterior, onde aprendi a enxergar operações como ecossistemas conectados — com riscos, dependências e oportunidades.</p><p data-i18n="about.body" class="mt-7 leading-8 text-slate">Hoje, essa visão orienta minha transição estratégica para a tecnologia. Sou graduada em Comércio Exterior e estou em formação em Análise e Desenvolvimento de Sistemas, com foco em construir soluções backend confiáveis usando Java e Spring Boot. Meu trabalho combina engenharia, cibersegurança e observabilidade para transformar complexidade em operação clara, segura e eficiente.</p><div class="mt-10 h-px w-full bg-gradient-to-r from-cyan to-transparent"></div><div class="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm text-slate"><span data-i18n="about.trait1">Curiosidade estruturada</span><span>•</span><span data-i18n="about.trait2">Visão sistêmica</span><span>•</span><span data-i18n="about.trait3">Aprendizado contínuo</span></div></div>
         </div>
       </section>
@@ -143,9 +155,9 @@
       </section>
     </main>
     <footer class="border-t border-line"><div class="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-xs text-slate sm:flex-row sm:items-center sm:justify-between lg:px-10"><p>© <span id="year"></span> Alba Morgana dos Santos Benício</p><p class="font-mono tracking-wide">clareza · segurança · propósito</p></div></footer>
-    <div id="container-assistente" role="button" tabindex="0" aria-label="Assistente Fifi, capivara tecnológica">
-      <div id="balao-fifi">E aí! Sou a Fifi 🦫, a capivara assistente mais atenta do Capibaribe. Calma, eu não mordo! Só caço os bugs do sistema e os logs suspeitos que tentam passar despercebidos.</div>
-      <spline-viewer id="fifi-spline" url="https://prod.spline.design/adIxmFGcsBZKCEf1/scene.splinecode" aria-label="Capivara 3D interativa"></spline-viewer>
+    <div id="container-assistente" role="button" tabindex="0" aria-label="Assistente Pimpão, urso tecnológico">
+      <div id="balao-pimpao">E aí! Sou o Pimpão 🐻, o urso assistente atendo do sistema. Calma, eu não mordo! Só caço os bugs e os logs suspeitos que tentam passar despercebidos.</div>
+      <div id="canvas-pimpao" aria-label="Urso 3D interativo"></div>
     </div>
     <script>
       const translations = {
@@ -205,19 +217,108 @@
         menu.classList.add("hidden");
       }));
       const assistant = document.getElementById("container-assistente");
-      const showFifiMessage = () => {
+      const showPimpaoMessage = () => {
         assistant.classList.add("is-speaking");
-        window.clearTimeout(showFifiMessage.timeout);
-        showFifiMessage.timeout = window.setTimeout(() => assistant.classList.remove("is-speaking"), 3800);
+        window.clearTimeout(showPimpaoMessage.timeout);
+        showPimpaoMessage.timeout = window.setTimeout(() => assistant.classList.remove("is-speaking"), 3800);
       };
-      assistant.addEventListener("mouseenter", showFifiMessage);
-      assistant.addEventListener("click", showFifiMessage);
+      assistant.addEventListener("mouseenter", showPimpaoMessage);
+      assistant.addEventListener("click", showPimpaoMessage);
       assistant.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          showFifiMessage();
+          showPimpaoMessage();
         }
       });
+      const pimpaoStage = document.getElementById("canvas-pimpao");
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
+      camera.position.set(0, 0.05, 7.1);
+      camera.lookAt(0, -0.15, 0);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(180, 180, false);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      pimpaoStage.appendChild(renderer.domElement);
+      const pimpao = new THREE.Group();
+      pimpao.scale.setScalar(0.58);
+      pimpao.position.y = -0.04;
+      scene.add(pimpao);
+      const chestnut = new THREE.MeshStandardMaterial({ color: 0x9a6849, roughness: 0.82 });
+      const muzzleBrown = new THREE.MeshStandardMaterial({ color: 0xc28b68, roughness: 0.86 });
+      const darkBrown = new THREE.MeshStandardMaterial({ color: 0x4b2d22, roughness: 0.78 });
+      const cyan = new THREE.MeshStandardMaterial({ color: 0x00a3c4, emissive: 0x007791, emissiveIntensity: 1.4, metalness: 0.45, roughness: 0.22 });
+      const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x00ffcc, emissive: 0x00a3c4, emissiveIntensity: 2, metalness: 0.2, roughness: 0.18 });
+      const addMesh = (geometry, material, scale, position, parent = pimpao) => {
+        const item = new THREE.Mesh(geometry, material);
+        item.scale.set(...scale);
+        item.position.set(...position);
+        parent.add(item);
+        return item;
+      };
+      addMesh(new THREE.SphereGeometry(1, 28, 20), chestnut, [1.12, 0.95, 0.86], [0, -0.68, 0]);
+      const head = new THREE.Group();
+      head.position.set(0, 0.35, 0.08);
+      pimpao.add(head);
+      addMesh(new THREE.SphereGeometry(1, 28, 20), chestnut, [0.9, 0.82, 0.78], [0, 0, 0], head);
+      addMesh(new THREE.SphereGeometry(1, 24, 16), muzzleBrown, [0.56, 0.34, 0.48], [0, -0.18, 0.62], head);
+      addMesh(new THREE.SphereGeometry(1, 20, 12), darkBrown, [0.25, 0.13, 0.14], [0, -0.11, 0.98], head);
+      const eyes = [];
+      [-1, 1].forEach((side) => {
+        addMesh(new THREE.SphereGeometry(1, 20, 14), chestnut, [0.22, 0.25, 0.15], [side * 0.67, 0.76, 0.02], head);
+        eyes.push(addMesh(new THREE.SphereGeometry(1, 16, 12), eyeMaterial, [0.09, 0.12, 0.06], [side * 0.31, 0.32, 0.72], head));
+      });
+      const glasses = new THREE.Group();
+      const frameGeometry = new THREE.TorusGeometry(0.22, 0.025, 8, 24);
+      [-1, 1].forEach((side) => {
+        const frame = new THREE.Mesh(frameGeometry, cyan);
+        frame.scale.set(1, 0.75, 1);
+        frame.position.set(side * 0.31, 0.32, 0.78);
+        glasses.add(frame);
+      });
+      const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.035, 0.035), cyan);
+      bridge.position.set(0, 0.32, 0.78);
+      glasses.add(bridge);
+      head.add(glasses);
+      const headset = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.025, 8, 32, Math.PI), cyan);
+      headset.rotation.z = Math.PI;
+      headset.position.set(0, 0.22, -0.02);
+      head.add(headset);
+      const stripeGeometry = new THREE.BoxGeometry(0.1, 0.52, 0.035);
+      [-0.42, -0.14, 0.14, 0.42].forEach((x, index) => {
+        const stripe = new THREE.Mesh(stripeGeometry, index % 2 ? eyeMaterial : cyan);
+        stripe.position.set(x, -0.67, 0.78);
+        stripe.rotation.z = x * -0.28;
+        pimpao.add(stripe);
+      });
+      scene.add(new THREE.HemisphereLight(0xffffff, 0xb9c6cc, 2.2));
+      const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
+      keyLight.position.set(2, 3, 4);
+      scene.add(keyLight);
+      let targetRotation = { x: 0, y: 0 };
+      let blinkAt = performance.now() + 2600;
+      let jump = 0;
+      document.addEventListener("pointermove", (event) => {
+        targetRotation = {
+          x: ((event.clientY / window.innerHeight) * 2 - 1) * -0.18,
+          y: ((event.clientX / window.innerWidth) * 2 - 1) * 0.28
+        };
+      });
+      const animatePimpao = (now) => {
+        requestAnimationFrame(animatePimpao);
+        head.rotation.x += (targetRotation.x - head.rotation.x) * 0.055;
+        head.rotation.y += (targetRotation.y - head.rotation.y) * 0.055;
+        pimpao.position.y = -0.04 + Math.max(0, jump);
+        jump *= 0.9;
+        if (now > blinkAt) {
+          eyes.forEach((eye) => { eye.scale.y = 0.015; });
+          window.setTimeout(() => eyes.forEach((eye) => { eye.scale.y = 0.12; }), 115);
+          blinkAt = now + 2800 + Math.random() * 3000;
+        }
+        renderer.render(scene, camera);
+      };
+      assistant.addEventListener("click", () => { jump = 0.2; });
+      animatePimpao(performance.now());
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
     <style>
@@ -231,7 +332,7 @@
         align-items: center;
         cursor: pointer;
       }
-      #balao-fifi {
+      #balao-pimpao {
         width: min(360px, calc(100vw - 32px));
         margin-bottom: 10px;
         padding: 16px 18px;
@@ -243,7 +344,7 @@
         line-height: 1.55;
         text-align: center;
       }
-      #fifi-spline {
+      #canvas-pimpao {
         width: 180px;
         height: 180px;
         display: block;
@@ -254,7 +355,7 @@
           right: 12px;
           bottom: 12px;
         }
-        #balao-fifi {
+        #balao-pimpao {
           max-width: min(320px, calc(100vw - 32px));
           font-size: 0.8rem;
         }
