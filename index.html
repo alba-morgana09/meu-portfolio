@@ -7,7 +7,6 @@
     <meta name="theme-color" content="#F8FAFC" />
     <title>Alba Morgana | Engenharia de Software & Segurança</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.161.0/three.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -62,8 +61,6 @@
         border-radius: 28px;
         box-shadow: 0 18px 45px rgba(15, 23, 42, .12);
       }
-      .speech { opacity: 0; transform: translateY(8px) scale(.96); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
-      #container-assistente:hover #balao-pimpao, #container-assistente.is-speaking #balao-pimpao { opacity: 1; transform: translateY(0) scale(1); }
       @keyframes reveal { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
       @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
@@ -155,10 +152,6 @@
       </section>
     </main>
     <footer class="border-t border-line"><div class="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-xs text-slate sm:flex-row sm:items-center sm:justify-between lg:px-10"><p>© <span id="year"></span> Alba Morgana dos Santos Benício</p><p class="font-mono tracking-wide">clareza · segurança · propósito</p></div></footer>
-    <div id="container-assistente" role="button" tabindex="0" aria-label="Assistente Pimpão, urso tecnológico">
-      <div id="balao-pimpao">E aí! Sou o Pimpão 🐻, o urso assistente atendo do sistema. Calma, eu não mordo! Só caço os bugs e os logs suspeitos que tentam passar despercebidos.</div>
-      <canvas id="canvas-pimpao" style="width: 180px; height: 180px; display: block;" aria-label="Urso 3D interativo"></canvas>
-    </div>
     <script>
       const translations = {
         pt: {
@@ -216,148 +209,9 @@
         menuButton.setAttribute("aria-expanded", "false");
         menu.classList.add("hidden");
       }));
-      const assistant = document.getElementById("container-assistente");
-      const showPimpaoMessage = () => {
-        assistant.classList.add("is-speaking");
-        window.clearTimeout(showPimpaoMessage.timeout);
-        showPimpaoMessage.timeout = window.setTimeout(() => assistant.classList.remove("is-speaking"), 3800);
-      };
-      assistant.addEventListener("mouseenter", showPimpaoMessage);
-      assistant.addEventListener("click", showPimpaoMessage);
-      assistant.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          showPimpaoMessage();
-        }
-      });
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-      camera.position.set(0, 0, 4);
-      camera.lookAt(0, -0.15, 0);
-      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas-pimpao'), alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(180, 180);
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      const pimpao = new THREE.Group();
-      pimpao.scale.setScalar(0.46);
-      pimpao.position.y = -0.02;
-      scene.add(pimpao);
-      const chestnut = new THREE.MeshStandardMaterial({ color: 0x9a6849, roughness: 0.82 });
-      const muzzleBrown = new THREE.MeshStandardMaterial({ color: 0xc28b68, roughness: 0.86 });
-      const darkBrown = new THREE.MeshStandardMaterial({ color: 0x4b2d22, roughness: 0.78 });
-      const cyan = new THREE.MeshStandardMaterial({ color: 0x00a3c4, emissive: 0x007791, emissiveIntensity: 1.4, metalness: 0.45, roughness: 0.22 });
-      const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x00ffcc, emissive: 0x00a3c4, emissiveIntensity: 2, metalness: 0.2, roughness: 0.18 });
-      const addMesh = (geometry, material, scale, position, parent = pimpao) => {
-        const item = new THREE.Mesh(geometry, material);
-        item.scale.set(...scale);
-        item.position.set(...position);
-        parent.add(item);
-        return item;
-      };
-      addMesh(new THREE.SphereGeometry(1, 28, 20), chestnut, [1.12, 0.95, 0.86], [0, -0.68, 0]);
-      const head = new THREE.Group();
-      head.position.set(0, 0.35, 0.08);
-      pimpao.add(head);
-      addMesh(new THREE.SphereGeometry(1, 28, 20), chestnut, [0.9, 0.82, 0.78], [0, 0, 0], head);
-      addMesh(new THREE.SphereGeometry(1, 24, 16), muzzleBrown, [0.56, 0.34, 0.48], [0, -0.18, 0.62], head);
-      addMesh(new THREE.SphereGeometry(1, 20, 12), darkBrown, [0.25, 0.13, 0.14], [0, -0.11, 0.98], head);
-      const eyes = [];
-      [-1, 1].forEach((side) => {
-        addMesh(new THREE.SphereGeometry(1, 20, 14), chestnut, [0.22, 0.25, 0.15], [side * 0.67, 0.76, 0.02], head);
-        eyes.push(addMesh(new THREE.SphereGeometry(1, 16, 12), eyeMaterial, [0.09, 0.12, 0.06], [side * 0.31, 0.32, 0.72], head));
-      });
-      const glasses = new THREE.Group();
-      const frameGeometry = new THREE.TorusGeometry(0.22, 0.025, 8, 24);
-      [-1, 1].forEach((side) => {
-        const frame = new THREE.Mesh(frameGeometry, cyan);
-        frame.scale.set(1, 0.75, 1);
-        frame.position.set(side * 0.31, 0.32, 0.78);
-        glasses.add(frame);
-      });
-      const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.035, 0.035), cyan);
-      bridge.position.set(0, 0.32, 0.78);
-      glasses.add(bridge);
-      head.add(glasses);
-      const headset = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.025, 8, 32, Math.PI), cyan);
-      headset.rotation.z = Math.PI;
-      headset.position.set(0, 0.22, -0.02);
-      head.add(headset);
-      const stripeGeometry = new THREE.BoxGeometry(0.1, 0.52, 0.035);
-      [-0.42, -0.14, 0.14, 0.42].forEach((x, index) => {
-        const stripe = new THREE.Mesh(stripeGeometry, index % 2 ? eyeMaterial : cyan);
-        stripe.position.set(x, -0.67, 0.78);
-        stripe.rotation.z = x * -0.28;
-        pimpao.add(stripe);
-      });
-      scene.add(new THREE.HemisphereLight(0xffffff, 0xb9c6cc, 2.2));
-      const keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
-      keyLight.position.set(2, 3, 4);
-      scene.add(keyLight);
-      let targetRotation = { x: 0, y: 0 };
-      let blinkAt = performance.now() + 2600;
-      let jump = 0;
-      document.addEventListener("pointermove", (event) => {
-        targetRotation = {
-          x: ((event.clientY / window.innerHeight) * 2 - 1) * -0.18,
-          y: ((event.clientX / window.innerWidth) * 2 - 1) * 0.28
-        };
-      });
-      const animatePimpao = (now) => {
-        requestAnimationFrame(animatePimpao);
-        head.rotation.x += (targetRotation.x - head.rotation.x) * 0.055;
-        head.rotation.y += (targetRotation.y - head.rotation.y) * 0.055;
-        pimpao.position.y = -0.02 + Math.max(0, jump);
-        jump *= 0.9;
-        if (now > blinkAt) {
-          eyes.forEach((eye) => { eye.scale.y = 0.015; });
-          window.setTimeout(() => eyes.forEach((eye) => { eye.scale.y = 0.12; }), 115);
-          blinkAt = now + 2800 + Math.random() * 3000;
-        }
-        renderer.render(scene, camera);
-      };
-      assistant.addEventListener("click", () => { jump = 0.2; });
-      animatePimpao(performance.now());
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
     <style>
-      #container-assistente {
-        position: fixed;
-        right: 20px;
-        bottom: 20px;
-        z-index: 45;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        cursor: pointer;
-      }
-      #balao-pimpao {
-        width: min(360px, calc(100vw - 32px));
-        margin-bottom: 10px;
-        padding: 16px 18px;
-        border-radius: 16px;
-        background: #ffffff;
-        color: #0f172a;
-        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
-        font-size: 0.9rem;
-        line-height: 1.55;
-        text-align: center;
-      }
-      #canvas-pimpao {
-        width: 180px;
-        height: 180px;
-        display: block;
-        overflow: hidden;
-      }
-      @media (max-width: 640px) {
-        #container-assistente {
-          right: 12px;
-          bottom: 12px;
-        }
-        #balao-pimpao {
-          max-width: min(320px, calc(100vw - 32px));
-          font-size: 0.8rem;
-        }
-      }
     </style>
   </body>
 </html>
